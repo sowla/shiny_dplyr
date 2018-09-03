@@ -1,3 +1,4 @@
+library(tibble)
 library(glue)
 library(purrr)
 library(dplyr)
@@ -7,10 +8,8 @@ library(dragulaR)
 my_mtcars <- 
   tibble::rownames_to_column(mtcars, "model") %>% 
   as_tibble()
-box_names <- c("select 'model', 'mpg', 'hp'", "select 'model', 'mpg'", "pull 'mpg'")
 
 source("M_verb_box.R")
-
 
 ui <- fluidPage(
   titlePanel("shiny dplyr"),
@@ -19,7 +18,7 @@ ui <- fluidPage(
     column(3,
       h4("Drag from here:"),
       div(id = "Available", style = "min-height: 1000px;",
-        map2(1:3, box_names, function(x, y) verb_box_UI(id = x, label = y))
+        map(1:3, function(x, df) verb_box_UI(id = x, df = my_mtcars))
       )
     ),
     column(3,
@@ -46,19 +45,18 @@ server <- function(input, output) {
     state <- dragulaValue(input$dragula)
     validate(need(state$Picked, message = "Please select at least one function."))
       
-      test <- list(func = c("select", "select", "pull"), var = c("'model', 'mpg', 'hp'", "'model', 'mpg'", "'mpg'"))
-      
       df <- my_mtcars
       
       for (i in 1:length(state$Picked)) {
-
         pos <- reactive({state$Picked[i]})
-        df <- 
-          glue("{test$func[[{{pos()}}]]}({test$var[[{{pos()}}]]})", 
-            .open = "{{", 
-            .close = "}}"
+        verb <- input[[glue("{pos()}-verb")]]
+        cols <- input[[glue("{pos()}-cols")]]
+        
+        df <-
+          case_when(
+            verb == "select" ~ glue("{verb}(cols)"),
+            TRUE ~ glue("{verb}({cols})")
           ) %>%
-          glue() %>%
           c("df", .) %>%
           glue_collapse(" %>% ") %>%
           parse(text = .) %>%
@@ -69,7 +67,6 @@ server <- function(input, output) {
   
   output$print <- renderText({
     state <- dragulaValue(input$dragula)
-    print("order of verb boxes:")
     print(state$Picked)
   })
   
