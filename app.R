@@ -3,6 +3,7 @@ library(glue)
 library(purrr)
 library(dplyr)
 library(shiny)
+library(shinythemes)
 library(dragulaR)
 
 my_mtcars <- 
@@ -12,9 +13,12 @@ my_mtcars <-
 source("M_verb_box.R")
 
 ui <- fluidPage(
+  
   titlePanel("shiny dplyr"),
+  theme = shinytheme("flatly"),
   
   fluidRow(
+    
     column(3,
       h4("Drag from here:"),
       div(id = "Available", style = "min-height: 1000px;",
@@ -45,24 +49,27 @@ server <- function(input, output) {
     state <- dragulaValue(input$dragula)
     validate(need(state$Picked, message = "Please select at least one function."))
       
-      df <- my_mtcars
+      orig_df <- my_mtcars
       
       for (i in 1:length(state$Picked)) {
         pos <- reactive({state$Picked[i]})
         verb <- input[[glue("{pos()}-verb")]]
         cols <- input[[glue("{pos()}-cols")]]
         
-        df <-
-          case_when(
-            verb == "select" ~ glue("{verb}(cols)"),
-            TRUE ~ glue("{verb}({cols})")
-          ) %>%
-          c("df", .) %>%
-          glue_collapse(" %>% ") %>%
-          parse(text = .) %>%
-          eval()
+        processed_df <-  # selects all if select verb but no col - add logic
+          reactive({
+            case_when(
+              verb == "select" ~ glue("{verb}(cols)"),
+              TRUE ~ glue("{verb}({cols})")
+            ) %>%
+              c("orig_df", .) %>%
+              glue_collapse(" %>% ") %>%
+              parse(text = .) %>%
+              eval()
+          })
       }
-      df
+      processed_df()
+      
   })
   
   output$print <- renderText({

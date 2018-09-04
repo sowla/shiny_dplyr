@@ -1,9 +1,10 @@
 verb_box_UI <- function(id, df) {
   ns <- NS(id)
   
-  div(style = "border-width:1px;border-style:solid;min-height:30px",
+  div(class = "well",
     drag = id,
-    div(strong(paste0("action", id))),
+    # div(strong(paste0("action", id))),
+    # div(strong(func), br(), "description goes here")
     fluidRow(
       column(6,
         selectizeInput(
@@ -23,6 +24,7 @@ verb_box_UI <- function(id, df) {
           ns("cols"),
           label = "cols",
           names(df),
+          selected = NULL,
           multiple = TRUE
         )
       )
@@ -30,6 +32,8 @@ verb_box_UI <- function(id, df) {
   )
 }
 
+
 verb_box <- function(input, output, session) {
   input$verb
 }
+
