@@ -2,6 +2,7 @@ library(tibble)
 library(glue)
 library(purrr)
 library(dplyr)
+library(wired)  # https://github.com/dreamRs/wired
 library(shiny)
 library(shinythemes)
 library(dragulaR)
@@ -15,11 +16,11 @@ source("M_verb_box.R")
 ui <- fluidPage(
   
   titlePanel("shiny dplyr"),
-  theme = shinytheme("flatly"),
+  # theme = shinytheme("flatly"),
   
   fluidRow(
     
-    column(3,
+    column(3,  # if use wired, will have to change to splitcells
       h4("Drag from here:"),
       div(id = "Available", style = "min-height: 1000px;",
         map(1:3, function(x, df) verb_box_UI(id = x, df = my_mtcars))

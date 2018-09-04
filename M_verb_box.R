@@ -1,7 +1,8 @@
 verb_box_UI <- function(id, df) {
   ns <- NS(id)
   
-  div(class = "well",
+  # div(class = "well",  # if shinytheme
+  wired_card(  # if wired
     drag = id,
     # div(strong(paste0("action", id))),
     # div(strong(func), br(), "description goes here")
