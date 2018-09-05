@@ -53,11 +53,30 @@ server <- function(input, output) {
     dragula(c("Available", "Picked"))
   })
   
+  
+  # make action_string
   action_string <- list()
   action_string[[1]] <- reactive({ callModule(action_box, 1) })
   action_string[[2]] <- reactive({ callModule(action_box, 2) })
   action_string[[3]] <- reactive({ callModule(action_box, 3) })
   
+  
+  # show code at the bottom of action box
+  observeEvent(
+    input$`1-cols`,
+    callModule(update_action_box, 1, action_string[[1]])
+  )
+  observeEvent(
+    input$`2-cols`,
+    callModule(update_action_box, 2, action_string[[2]])
+  )
+  observeEvent(
+    input$`3-cols`,
+    callModule(update_action_box, 3, action_string[[3]])
+  )
+  
+  
+  # combine strings and eval to dplyr pipeline
   output$data <- renderDT({
     req(input$dragula)
     state <- dragulaValue(input$dragula)

@@ -53,10 +53,16 @@ action_box <- function(input, output, session) {
 
 }
 
+update_action_box <- function(input, output, session, string) {
+  
+  output$desc <- renderUI({
+    
+    ##TODO: use verbatim text output or different font to make it more obvious it's code?
+    span(strong("code: "), string())
+    
+  })
+  
+}
 
-# output$desc <- renderUI({
-#   ##TODO: fix that code only comes up once dragged to picked
-#   ## use verbatim text output or different font to make it more obvious it's code?
-#   span(strong("code: "), glue("{verb}({cols})"))
-# })
+
 
