@@ -36,7 +36,7 @@ ui <- fluidPage(
         id = "display",
         tabPanel(
           title = "data",
-          # textOutput("print"),
+          # textOutput("print"),  # for debugging only
           br(),
           DTOutput("data_df"),
           uiOutput("data_text")
@@ -79,7 +79,7 @@ server <- function(input, output) {
   )
   
   
-  ### save often used values as variables -----
+  ### save often used values as reactive expressions -----
   state <- reactive({
     req(input$dragula)
     dragulaValue(input$dragula)
@@ -138,6 +138,7 @@ server <- function(input, output) {
   })
   
   
+  ### formatting options for DT -----
   DT_opts <- reactive({
     
     if (verb() == "group_by"){
@@ -187,7 +188,7 @@ server <- function(input, output) {
             unique(df[[DT_opts()]]), 
             scale_colour(length(unique(df[[DT_opts()]])))
           )
-        )  # only works for one column!!
+        )
     }
     
   })
@@ -228,6 +229,7 @@ server <- function(input, output) {
   })
   
   
+  ## just for debugging
   # output$print <- renderPrint({
   #   req(state()$Picked)
   #   # print(ft_opts())

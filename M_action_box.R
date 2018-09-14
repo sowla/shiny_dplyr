@@ -3,7 +3,7 @@
 action_box_UI <- function(id, df) {
   ns <- NS(id)
   
-  div(class = "well",
+  div(class = "well",  # colour-code based on type of verb?
     drag = id,
     fluidRow(
       column(6,
@@ -22,7 +22,7 @@ action_box_UI <- function(id, df) {
       column(6,
         selectizeInput(
           ns("cols"),
-          label = "cols",  # change to fit functions' parameters
+          label = "cols",  ##TODO: change to fit functions' parameters
           names(df),
           selected = NULL,
           multiple = TRUE
