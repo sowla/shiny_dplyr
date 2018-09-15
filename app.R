@@ -8,6 +8,7 @@ library(shiny)
 library(shinythemes)
 library(DT)
 library(dragulaR)
+library(RColorBrewer)
 # library(shinydashboardPlus) # https://github.com/DivadNojnarg/shinydashboardPlus
 
 
