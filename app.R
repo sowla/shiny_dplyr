@@ -150,6 +150,24 @@ server <- function(input, output) {
   })
   
   
+  df <- reactive({
+    df_string <- "my_mtcars"
+    
+    for (i in 1:length(state()$Picked)) {
+      
+      pos <- state()$Picked[i] %>% as.numeric()
+      
+      df_string <-
+        action_string[[pos]]() %>%
+        c(df_string, .) %>%
+        glue_collapse(" %>% ")
+    }
+    df_string %>%
+      parse(text = .) %>%
+      eval()
+  })
+  
+  
   ### combine strings and eval to dplyr pipeline -----
   output$data_df <- renderDT({
     validate(need(state()$Picked, message = "Please select at least one function."))
@@ -157,36 +175,21 @@ server <- function(input, output) {
     if (verb() == "pull") {
       return(NULL)
     }
-    
-    ##TODO: refactor (can't use reactive expression; Error in UseMethod: no applicable method for 'select_' applied to an object of class "c('reactiveExpr', 'reactive')")
-    df <- my_mtcars
 
-    for (i in 1:length(state()$Picked)) {
-
-      pos <- state()$Picked[i] %>% as.numeric()
-
-      df <-
-        action_string[[pos]]() %>%
-        c("df", .) %>%
-        glue_collapse(" %>% ") %>%
-        parse(text = .) %>%
-        eval()
-    }
-    
     if (is.null(DT_opts())) {
-      df %>%
+      df() %>%
         formattable(ft_opts()) %>%
         as.datatable(
           rownames = TRUE, filter = "none", selection = "none"
         )
     } else {
-      datatable(df) %>%
+      datatable(df()) %>%
         formatStyle(
           DT_opts(),
           target = "row",
           backgroundColor = styleEqual(
-            unique(df[[DT_opts()]]), 
-            scale_colour(length(unique(df[[DT_opts()]])))
+            unique(df()[[DT_opts()]]),
+            scale_colour(length(unique(df()[[DT_opts()]])))
           )
         )
     }
@@ -208,24 +211,9 @@ server <- function(input, output) {
   
   
   output$pull <- renderPrint({
-    req(state()$Picked)
     
-    ##TODO: refactor
-    df <- my_mtcars
-
-    for (i in 1:length(state()$Picked)) {
-
-      pos <- state()$Picked[i] %>% as.numeric()
-
-      df <-
-        action_string[[pos]]() %>%
-        c("df", .) %>%
-        glue_collapse(" %>% ") %>%
-        parse(text = .) %>%
-        eval()
-    }
+    df()
     
-    df
   })
   
   
