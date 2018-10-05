@@ -3,5 +3,7 @@
 .RData
 .Ruserdata
 
+.DS_Store
+
 /gifs/
 misc_code.R

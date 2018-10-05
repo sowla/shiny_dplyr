@@ -1,11 +1,10 @@
+##### UI #####
+
 action_box_UI <- function(id, df) {
   ns <- NS(id)
   
-  div(class = "well",  # if shinytheme
-  # wired_card(  # if wired
+  div(class = "well",  # colour-code based on type of verb?
     drag = id,
-    # div(strong(paste0("action", id))),
-    # div(strong(func), br(), "description goes here")
     fluidRow(
       column(6,
         selectizeInput(
@@ -14,17 +13,16 @@ action_box_UI <- function(id, df) {
           c("select",  ##TODO: add helper functions
             "pull",  ##TODO: diff output for pull
             "arrange",  ##TODO: add `desc()`
-            "group_by",
-            "count",
-            "add_count"
-            ##TODO: ask Susan if she'd like to help with designing app?
+            "group_by",  # only works for one column
+            "count",  # only works for one column
+            "add_count"  # only works for one column
           )
         )
       ),
       column(6,
         selectizeInput(
           ns("cols"),
-          label = "cols",  # change to fit functions' parameters
+          label = "cols",  ##TODO: change to fit functions' parameters
           names(df),
           selected = NULL,
           multiple = TRUE
@@ -39,6 +37,8 @@ action_box_UI <- function(id, df) {
 }
 
 
+
+##### server #####
 
 action_box <- function(input, output, session) {
     
@@ -58,51 +58,19 @@ action_box <- function(input, output, session) {
 }
 
 
-ft_opt_cols <- function(input, output, session, string) {
-  
-  # if (!(verb %in% c("group_by"))){  # in case add others
-  if (input$verb == "add_count"){
-    list(input$cols, "n")  # allow input col name
-  } else if (input$verb != "group_by"){
-    input$cols
-  } else {
-    NULL
-  }
-  
-}
-
-ft_opt_fmt <- function(input, output, session, string) {
-  
-  if (input$verb == "arrange"){
-    ~color_tile('white', 'lightgreen')
-    # ~color_tile('white', 'lightgreen')
-  } else if (input$verb == "add_count") {
-    list(
-      color_tile('lightgreen', 'lightgreen'), 
-      color_tile('lightblue', 'lightblue')
-    )
-  } else {
-    ~color_tile('lightgreen', 'lightgreen')
-  }
-  
+input_verb <- function(input, output, session) {
+  input$verb 
 }
 
 
-DT_fmt_style <- function(input, output, session, string) {
-  
-  if (input$verb == "group_by"){
-    input$cols
-  } else {
-    NULL
-  }
-  
+input_cols <- function(input, output, session) {
+  input$cols 
 }
 
 
 update_action_box <- function(input, output, session, string) {
   
   output$desc <- renderUI({
-    
 
     ##TODO: use verbatim text output/different font to make it more obvious it's code?
     span(strong("code: "), string())
