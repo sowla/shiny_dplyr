@@ -90,12 +90,17 @@ ft_opt_fmt <- function(input, output, session, string) {
 
 DT_fmt_style <- function(input, output, session, string) {
   
-  if (input$verb == "group_by"){
-    input$cols
-  } else {
-    NULL
-  }
+  # reactive for obtaining columns specified if verb is "group_by"
+  cols <- reactive({
+    req(input$verb)
+    if (input$verb == "group_by"){
+      input$cols
+    } else {
+      NULL
+    }
+  })
   
+  cols()
 }
 
 
