@@ -36,7 +36,6 @@ ui <- fluidPage(
         id = "display",
         tabPanel(
           title = "data",
-          # textOutput("print"),  # for debugging only
           br(),
           DTOutput("data_df"),
           uiOutput("data_text")
@@ -183,13 +182,14 @@ server <- function(input, output) {
           rownames = TRUE, filter = "none", selection = "none"
         )
     } else {
+      unique_df_subset <- unique(df()[[DT_opts()]])
       datatable(df()) %>%
         formatStyle(
           DT_opts(),
           target = "row",
           backgroundColor = styleEqual(
-            unique(df()[[DT_opts()]]),
-            scale_colour(length(unique(df()[[DT_opts()]])))
+            unique_df_subset,
+            scale_colour(length(unique_df_subset))
           )
         )
     }
@@ -215,13 +215,6 @@ server <- function(input, output) {
     df()
     
   })
-  
-  
-  ## just for debugging
-  # output$print <- renderPrint({
-  #   req(state()$Picked)
-  #   # print(ft_opts())
-  # })
   
 }
 

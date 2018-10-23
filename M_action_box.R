@@ -3,26 +3,26 @@
 action_box_UI <- function(id, df) {
   ns <- NS(id)
   
-  div(class = "well",  # colour-code based on type of verb?
+  div(class = "well",
     drag = id,
     fluidRow(
       column(6,
         selectizeInput(
           ns("verb"),
           label = "verb",
-          c("select",  ##TODO: add helper functions
-            "pull",  ##TODO: diff output for pull
-            "arrange",  ##TODO: add `desc()`
-            "group_by",  # only works for one column
-            "count",  # only works for one column
-            "add_count"  # only works for one column
+          c("select",
+            "pull",
+            "arrange",
+            "group_by",
+            "count",
+            "add_count"
           )
         )
       ),
       column(6,
         selectizeInput(
           ns("cols"),
-          label = "cols",  ##TODO: change to fit functions' parameters
+          label = "cols",
           names(df),
           selected = NULL,
           multiple = TRUE
@@ -30,9 +30,8 @@ action_box_UI <- function(id, df) {
       )
     ),
     uiOutput(
-      ns("desc")
+      ns("description")
     )
-    ##TODO: add button to remove UI
   )
 }
 
@@ -70,9 +69,8 @@ input_cols <- function(input, output, session) {
 
 update_action_box <- function(input, output, session, string) {
   
-  output$desc <- renderUI({
+  output$description <- renderUI({
 
-    ##TODO: use verbatim text output/different font to make it more obvious it's code?
     span(strong("code: "), string())
     
   })
